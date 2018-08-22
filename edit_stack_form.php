@@ -276,13 +276,13 @@ class qtype_stack_edit_form extends question_edit_form {
                 stack_string('prtpartiallycorrectfeedback'),
                 array('rows' => 1), $this->editoroptions);
         $mform->getElement('prtpartiallycorrect')->setValue(array(
-                        'text' => $this->stackconfig->prtpartiallycorrect));
+                'text' => $this->stackconfig->prtpartiallycorrect));
 
         $mform->addElement('editor', 'prtincorrect',
                 stack_string('prtincorrectfeedback'),
                 array('rows' => 1), $this->editoroptions);
         $mform->getElement('prtincorrect')->setValue(array(
-                        'text' => $this->stackconfig->prtincorrect));
+                'text' => $this->stackconfig->prtincorrect));
 
         $mform->addElement('select', 'multiplicationsign',
                 stack_string('multiplicationsign'), stack_options::get_multiplication_sign_options());
@@ -586,11 +586,11 @@ class qtype_stack_edit_form extends question_edit_form {
         $question->specificfeedback      = $this->prepare_text_field('specificfeedback',
                                             $opt->specificfeedback, $opt->specificfeedbackformat, $question->id);
         $question->prtcorrect            = $this->prepare_text_field('prtcorrect',
-                                            $opt->prtcorrect, $opt->prtcorrectformat, $question->id);
+                                            get_string('defaultprtcorrectfeedback', 'qtype_stack'), $opt->prtcorrectformat, $question->id);
         $question->prtpartiallycorrect   = $this->prepare_text_field('prtpartiallycorrect',
-                                            $opt->prtpartiallycorrect, $opt->prtpartiallycorrectformat, $question->id);
+                                            get_string('defaultprtpartiallycorrectfeedback', 'qtype_stack'), $opt->prtpartiallycorrectformat, $question->id);
         $question->prtincorrect          = $this->prepare_text_field('prtincorrect',
-                                            $opt->prtincorrect, $opt->prtincorrectformat, $question->id);
+                                            get_string('defaultprtincorrectfeedback', 'qtype_stack'), $opt->prtincorrectformat, $question->id);
         $question->multiplicationsign    = $opt->multiplicationsign;
         $question->complexno             = $opt->complexno;
         $question->inversetrig           = $opt->inversetrig;

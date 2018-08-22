@@ -1048,6 +1048,16 @@ class qtype_stack_question extends question_graded_automatically_with_countback
             }
         }
 
+        // Check the feedback against the new defaults.
+        if (trim($this->prtcorrect) !== get_string('defaultprtcorrectfeedback', 'qtype_stack')) {
+            $errors[] = "Wrong correct feedback";
+        }
+        if (trim($this->prtpartiallycorrect) !== get_string('defaultprtpartiallycorrectfeedback', 'qtype_stack')) {
+            $errors[] = "Wrong partially correct feedback";
+        }
+        if (trim($this->prtincorrect) !== get_string('defaultprtincorrectfeedback', 'qtype_stack')) {
+            $errors[] = "Wrong incorrect feedback";
+        }
         return implode(' ', $errors);
     }
 }
