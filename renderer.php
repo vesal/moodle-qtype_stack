@@ -86,9 +86,8 @@ class qtype_stack_renderer extends qtype_renderer {
 
         // Initialise automatic validation, if enabled.
         if ($qaid && stack_utils::get_config()->ajaxvalidation) {
-            $js_params = array($inputstovaldiate, $qaid, $qa->get_field_prefix());
-            $this->page->requires->js_call_amd('qtype_stack/input', 'init_inputs', $js_params);
-            
+            $jsparams = array($inputstovaldiate, $qaid, $qa->get_field_prefix());
+            $this->page->requires->js_call_amd('qtype_stack/input', 'init_inputs', $jsparams);
         }
 
         $result = '';

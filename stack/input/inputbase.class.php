@@ -291,7 +291,11 @@ abstract class stack_input {
                         $this->errors[] = stack_string('numericalinputoptbooplerr', array('opt' => $option, 'val' => $arg));
                     }
                     break;
-
+                case 'popover':
+                    if (!in_array($arg, array('top', 'left', 'bottom', 'right'))) {
+                        $this->errors[] = stack_string('popoverpositionerr', array('opt' => $option, 'val' => $arg));
+                    }
+                    break;
                 default:
                     $this->errors[] = stack_string('inputoptionunknown', $option);
             }
@@ -976,42 +980,42 @@ abstract class stack_input {
      * @param string $fieldname the field name to use in the HTML for this input.
      * @return string HTML for the validation results for this input.
      */
-    public function render_contentsdisplayed(stack_input_state $state, $fieldname, $displayinline = true, $displayerr = false, $displayvars = false) {
+    public function render_contentsdisplayed(stack_input_state $state, $fieldname, $displayinline = true,
+            $displayerr = false, $displayvars = false) {
         if (self::BLANK == $state->status) {
             return '';
         }
-        
+
         if ($this->get_parameter('showValidation', 1) == 0 && self::INVALID != $state->status) {
             return '';
         }
         $feedback  = '';
-        
+
         $displaystr = stack_utils::logic_nouns_sort($state->contentsdisplayed, 'remove');
-        
+
         if ($displayinline) {
-            // TODO: speed test this? (It seems quite a nasty way of doing it)
+            // TODO: speed test this? (It seems quite a nasty way of doing it).
             $displaystr = substr($displaystr, 2, strlen($displaystr) - 4);
             $displaystr = '\\(' . $displaystr . '\\)';
             $displaystr = preg_replace('/\\\\]$/', '\\)', $displaystr);
         }
-            
+
         $feedback .= html_writer::tag('p', stack_string('studentValidation_contentsdisplayed', $displaystr));
-        
         if ($this->requires_validation() && '' !== $state->contents) {
             $feedback .= html_writer::empty_tag('input', array('type' => 'hidden',
                 'name' => $fieldname . '_val', 'value' => $this->contents_to_maxima($state->contents)));
         }
-        
+
         if ($displayerr && $state->errors) {
             $feedback .= html_writer::tag('p', $state->errors, array('class' => 'stack_errors'));
         }
-       
+
         if ($displayvars && $this->get_parameter('showValidation', 1) == 1 && !($state->lvars === '' or $state->lvars === '[]')) {
             $feedback .= $this->tag_listofvariables($state->lvars);
         }
         return $feedback;
     }
-    
+
     /**
      * Generate the HTML that gives the results of validating the student's input.
      * @param stack_input_state $state represents the results of the validation.

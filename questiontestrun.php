@@ -200,9 +200,9 @@ if (empty($question->deployedseeds)) {
             $variantdeployed = true;
         }
 
-        $icon = '';
+        $icon = stack_string('icon_warning');
         if ($bulktestresults[0]) {
-            $icon = $OUTPUT->pix_icon('t/check', stack_string('questiontestspass'));
+            $icon = stack_string('icon_check');
         }
         $notestable->data[] = array(
             $choice,

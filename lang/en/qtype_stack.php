@@ -36,6 +36,12 @@ $string['errors'] = 'Errors';
 $string['debuginfo'] = 'Debug info';
 $string['exceptionmessage'] = '{$a}';
 
+// Icons: these do not need to be translated.
+$string['icon_warning'] = '<span style="font-size: 1.5em; color:red;"><i class="fa fa-exclamation-triangle"></i></span>';
+$string['icon_check'] = '<span style="font-size: 1.5em; color:green;"><i class="fa fa-check"></i></span>';
+$string['icon_times'] = '<span style="font-size: 1.5em; color:red;"><i class="fa fa-times"></i></span>';
+$string['icon_adjust'] = '<span style="font-size: 1.5em; color:orange;"><i class="fa fa-adjust"></i></span>';
+
 // Capability names.
 $string['stack:usediagnostictools'] = 'Use the STACK tools';
 
@@ -80,9 +86,9 @@ $string['complexno'] = 'Meaning and display of sqrt(-1)';
 $string['complexno_help'] = 'Controls the meaning and display of the symbol i and sqrt(-1)';
 $string['complexno_link'] = '%%WWWROOT%%/question/type/stack/doc/doc.php/Authoring/Options.md#sqrt_minus_one.';
 $string['defaultmarkzeroifnoprts'] = 'The default mark must be 0 if this question has no PRTs.';
-$string['defaultprtcorrectfeedback'] = '<span style="font-size: 1.5em; color:green;"><i class="fa fa-check"></i></span> Correct answer, well done.';
-$string['defaultprtincorrectfeedback'] = '<span style="font-size: 1.5em; color:red;"><i class="fa fa-times"></i></span> Incorrect answer.';
-$string['defaultprtpartiallycorrectfeedback'] = '<span style="font-size: 1.5em; color:orange;"><i class="fa fa-adjust"></i></span> Your answer is partially correct.';
+$string['defaultprtcorrectfeedback'] = $string['icon_check'] . ' Correct answer, well done.';
+$string['defaultprtincorrectfeedback'] = $string['icon_times'] . ' Incorrect answer.';
+$string['defaultprtpartiallycorrectfeedback'] = $string['icon_adjust'] . ' Your answer is partially correct.';
 $string['branchfeedback'] = 'Node branch feedback';
 $string['branchfeedback_help'] = 'This is CASText which may depend on any of the question variables, input elements or the feedback variables. This is evaluated and displayed to the student if they pass down this branch.';
 $string['inputtest'] = 'Input test';
@@ -176,6 +182,7 @@ $string['numericalinputminmaxerr'] = 'The required minimum number of numerical p
 $string['numericalinputminsfmaxdperr'] = 'Do not specify requirements for both decimal places and significant figures in the same input.';
 $string['numericalinputoptinterr'] = 'The value of the option <code>{$a->opt}</code> should be an integer, but in fact it is <code>{$a->val}</code>.';
 $string['numericalinputoptboolerr'] = 'The value of the option <code>{$a->opt}</code> should be boolean, but in fact it is <code>{$a->val}</code>.';
+$string['popoverpositionerr'] = 'The value of the option <code>{$a->opt}</code> should be one of {top,left,bottom,right}, but in fact it is <code>{$a->val}</code>.';
 $string['inputwillberemoved'] = 'This input is no longer referred to in the question text. If you save the question now, the data about this input will be lost. Please confirm that you want to do this. Alternatively edit the question text to put back the \'[[input:{$a}]]\' and \'[[validation:{$a}]]\' placeholders.';
 $string['insertstars'] = 'Insert stars';
 $string['insertstars_help'] = 'This option provides a number of different options for inserting stars where multiplication is implied.  Please read the more detailed documentation.';
@@ -871,13 +878,17 @@ $string['equiv_MISSINGVAR']              = 'Missing assignments';
 $string['equiv_ASSUMEPOSVARS']           = 'Assume +ve vars';
 $string['equiv_ASSUMEPOSREALVARS']       = 'Assume +ve real vars';
 $string['equiv_LET']                     = 'Let';
+// We could localise the strings below using \vee, \wedge etc.
+$string['equiv_AND']                     = 'and';
+$string['equiv_OR']                      = 'or';
+$string['equiv_NOT']                     = 'not';
 
-$string['studentValidation_contentsdisplayed']  = ' {$a}';
+$string['studentValidation_contentsdisplayed']  = '{$a}';
 
 $string['studentValidation_yourLastAnswer']     = 'Your last answer was interpreted as follows: {$a}';
 $string['studentValidation_listofvariables']    = 'The variables found in your answer were: {$a}';
 $string['studentValidation_listofunits']        = 'The units found in your answer were: {$a}';
-$string['studentValidation_invalidAnswer']      = 'This answer is invalid. ';
+$string['studentValidation_invalidAnswer']      = $string['icon_warning'] . ' This answer is invalid. ';
 $string['studentValidation_notes']              = 'This input is not assessed automatically by STACK.  You can use it to record working, or comments for the teacher.';
 $string['stackQuestion_noQuestionParts']        = 'This item has no question parts for you to answer.';
 
@@ -1166,3 +1177,5 @@ $string['calc_int_methods_parts_fact'] = '\[
 or alternatively: \[\int_a^bf(x)g(x)\,{\rm d}x=\left[f(x)\,\int
 g(x){\rm d}x\right]_a^b -\int_a^b{{\rm d}f\over {\rm
 d}x}\left\{\int g(x){\rm d}x\right\}{\rm d}x.\]';
+
+$string['validationpopuptitle'] = 'Validation warning';

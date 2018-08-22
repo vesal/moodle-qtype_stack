@@ -5,6 +5,50 @@
     font-size: 100%;
     font-weight: bold;
 }
+
+.que.stack .casdisplay {
+    border: 1px solid #fff;
+    background-color: #fff;
+    margin: 0.2em 0.2em 0.5em;
+    padding: 0.5em 0.5em 0em;
+    display: inline-block;
+}
+
+.que.stack .warndisplay {
+    margin: 0.2em 0.2em 0.5em;
+    padding: 0.5em 0.5em 0em;
+    display: inline-block;
+    font-size: 1.5em;
+    color: #ff0000;
+}
+
+.que.stack .equivreasoning .casdisplay {
+    display: inline-block;
+    margin-left: 0.5em;
+    margin-right: 0;
+}
+
+.que.stack .casdisplay.empty {
+    display: none;
+}
+
+.que.stack .warndisplay.empty {
+    display: none;
+}
+
+.que.stack .casdisplay.waiting,
+.que.stack .casdisplay.loading {
+    color: #888;
+    min-height: 1em;
+}
+.que.stack .casdisplay.loading {
+    background: #fff url([[pix:moodle|i/loading_small]]) no-repeat top right;
+}
+.que.stack .casdisplay.waiting .stacksyntaxexample,
+.que.stack .casdisplay.loading .stacksyntaxexample {
+    color: #84aec1;
+}
+
 .que.stack .stackinputfeedback {
     border: 1px solid #fff;
     background-color: #fff;
@@ -272,3 +316,137 @@ body.ie:not(.ie11) .stack_abstract_graph {
 #simplemodal-container {height:360px; width:600px; border:4px solid #444; padding:12px;background-color:inherit;}
 #simplemodal-container .simplemodal-data {padding:8px;}
 #simplemodal-container a.modalCloseImg {background:url(./x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+
+/* Popover */
+.que.stack .popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  max-width: 276px;
+  padding: 1px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: normal;
+  line-break: auto;
+  line-height: 1.42857143;
+  text-align: left;
+  text-align: start;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  white-space: normal;
+  word-break: normal;
+  word-spacing: normal;
+  word-wrap: normal;
+  font-size: 14px;
+  background-color: #ffffff;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.que.stack .popover.top {
+  margin-top: -10px;
+}
+.que.stack .popover.right {
+  margin-left: 10px;
+}
+.que.stack .popover.bottom {
+  margin-top: 10px;
+}
+.que.stack .popover.left {
+  margin-left: -10px;
+}
+.que.stack .popover-title {
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0;
+}
+.que.stack .popover-content {
+  padding: 9px 14px;
+}
+.que.stack .popover > .arrow,
+.que.stack .popover > .arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.que.stack .popover > .arrow {
+  border-width: 11px;
+}
+.que.stack .popover > .arrow:after {
+  border-width: 10px;
+  content: "";
+}
+.que.stack .popover.top > .arrow {
+  left: 50%;
+  margin-left: -11px;
+  border-bottom-width: 0;
+  border-top-color: #999999;
+  border-top-color: rgba(0, 0, 0, 0.25);
+  bottom: -11px;
+}
+.que.stack .popover.top > .arrow:after {
+  content: " ";
+  bottom: 1px;
+  margin-left: -10px;
+  border-bottom-width: 0;
+  border-top-color: #ffffff;
+}
+.que.stack .popover.right > .arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-left-width: 0;
+  border-right-color: #999999;
+  border-right-color: rgba(0, 0, 0, 0.25);
+}
+.que.stack .popover.right > .arrow:after {
+  content: " ";
+  left: 1px;
+  bottom: -10px;
+  border-left-width: 0;
+  border-right-color: #ffffff;
+}
+.que.stack .popover.bottom > .arrow {
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999999;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  top: -11px;
+}
+.que.stack .popover.bottom > .arrow:after {
+  content: " ";
+  top: 1px;
+  margin-left: -10px;
+  border-top-width: 0;
+  border-bottom-color: #ffffff;
+}
+.que.stack .popover.left > .arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999999;
+  border-left-color: rgba(0, 0, 0, 0.25);
+}
+.que.stack .popover.left > .arrow:after {
+  content: " ";
+  right: 1px;
+  border-right-width: 0;
+  border-left-color: #ffffff;
+  bottom: -10px;
+}

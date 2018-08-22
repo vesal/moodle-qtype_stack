@@ -125,6 +125,11 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el = stack_input_factory::make('algebraic', 'sans1', 'x^2/(1+x^2)');
         $state = $el->validate_student_response(array('sans1' => 'x^2'), $options, 'x^2/(1+x^2)', null);
         $this->assertEquals(stack_input::VALID, $state->status);
+        $expected = '<p>Your last answer was interpreted as follows: <span class="filter_mathjaxloader_equation">' .
+            '<span class="nolink">\[ x^2 \]</span></span></p><input type="hidden" name="_val" value="x^2" />' .
+            '<p>The variables found in your answer were: <span class="filter_mathjaxloader_equation">' .
+            '<span class="nolink">\( \left[ x \right]\)</span></span> </p>';
+        $this->assertEquals($expected, $el->render_validation($state, ''));
         $this->assertEquals('A correct answer is <span class="filter_mathjaxloader_equation">'
           . '<span class="nolink">\( \frac{x^2}{1+x^2} \)</span></span>, which can be typed in as follows: '
           . '<code>x^2/(1+x^2)</code>', $el->get_teacher_answer_display('x^2/(1+x^2)', '\frac{x^2}{1+x^2}'));
@@ -134,7 +139,14 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $options = new stack_options();
         $el = stack_input_factory::make('algebraic', 'sans1', 'x^2/(1+x^2)');
         $state = $el->validate_student_response(array('sans1' => '2x(1+x^2)'), $options, 'x^2/(1+x^2)', null);
+        $expected = '<p>Your last answer was interpreted as follows: <span class="stacksyntaxexample">2x(1+x^2)</span></p>' .
+            '<input type="hidden" name="_val" value="2x(1+x^2)" /><p><span style="font-size: 1.5em; color:red;">' .
+            '<i class="fa fa-exclamation-triangle"></i></span> This answer is invalid. </p>' .
+            '<p class="stack_errors">You seem to be missing * characters. Perhaps you meant to type ' .
+            '<span class="stacksyntaxexample">2<font color="red">*</font>x(1+x^2)</span>.</p>';
+        $this->assertEquals($expected, $el->render_validation($state, ''));
         $this->assertEquals(stack_input::INVALID, $state->status);
+        $this->assertEquals('missing_stars', $state->note);
     }
 
     public function test_validate_student_response_3() {
@@ -144,6 +156,11 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el->set_parameter('strictSyntax', false);
         $state = $el->validate_student_response(array('sans1' => '2x', 'sans1_val' => '2x'), $options, 'x^2/(1+x^2)', array());
         $this->assertEquals(stack_input::SCORE, $state->status);
+        $expected = '<p>Your last answer was interpreted as follows: <span class="filter_mathjaxloader_equation">' .
+            '<span class="nolink">\[ 2\cdot x \]</span></span></p><input type="hidden" name="_val" value="2x" />' .
+            '<p>The variables found in your answer were: <span class="filter_mathjaxloader_equation">' .
+            '<span class="nolink">\( \left[ x \right]\)</span></span> </p>';
+        $this->assertEquals($expected, $el->render_validation($state, ''));
     }
 
     public function test_validate_student_response_4() {
@@ -163,6 +180,11 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $state = $el->validate_student_response(array('sans1' => '2x(1+x^2)+tans'), $options, 'x^2/(1+x^2)', array('tans'));
         $this->assertEquals(stack_input::INVALID, $state->status);
         $this->assertEquals('unknownFunction', $state->note);
+        $expected = '<p>Your last answer was interpreted as follows: <span class="stacksyntaxexample">2*x*(1+x^2)+tans</span></p>' .
+            '<input type="hidden" name="_val" value="2x(1+x^2)+tans" /><p><span style="font-size: 1.5em; color:red;">' .
+            '<i class="fa fa-exclamation-triangle"></i></span> This answer is invalid. </p>' .
+            '<p class="stack_errors">Unknown function: <span class="stacksyntaxexample">tans</span>.</p>';
+        $this->assertEquals($expected, $el->render_validation($state, ''));
     }
 
     public function test_validate_student_response_6() {
@@ -407,6 +429,7 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el = stack_input_factory::make('algebraic', 'sans1', '2*x');
         $state = $el->validate_student_response(array('sans1' => 'unknownfunction(x^2+1)+3*x'), $options, '2*x', array('ta'));
         $this->assertEquals(stack_input::INVALID, $state->status);
+        $this->assertEquals('unknownFunction', $state->note);
     }
 
     public function test_validate_student_response_allowwords_true() {
@@ -415,6 +438,7 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el->set_parameter('allowWords', 'pop, funney1, unknownfunction');
         $state = $el->validate_student_response(array('sans1' => 'unknownfunction(x^2+1)+3*x'), $options, '2*x', array('ta'));
         $this->assertEquals(stack_input::VALID, $state->status);
+        $this->assertEquals('', $state->note);
     }
 
     public function test_validate_student_response_forbidwords_none() {
@@ -439,6 +463,8 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $this->assertEquals(stack_input::INVALID, $state->status);
         // The noun form has been converted back to "int" in the contentsdisplayed.
         $this->assertEquals('<span class="stacksyntaxexample">int(x^2+1,x)+c</span>', $state->contentsdisplayed);
+        $this->assertEquals('', $state->note);
+
     }
 
     public function test_validate_student_response_single_variable() {
@@ -452,6 +478,7 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $this->assertEquals('cos(a*x)/(x(ln(x)))', $state->contentsmodified);
         $this->assertEquals('\[ \frac{\cos \left( a\cdot x \right)}{x\left(\ln \left( x \right)\right)} \]',
                 $state->contentsdisplayed);
+        $this->assertEquals('Variable_function', $state->note);
     }
 
     public function test_validate_student_response_single_variable_subscripts() {
@@ -553,6 +580,7 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el->set_parameter('sameType', true);
         $state = $el->validate_student_response(array('sans1' => '"Hello world"'), $options, 'x^2', null);
         $this->assertEquals(stack_input::INVALID, $state->status);
+        $this->assertEquals('', $state->note);
         $this->assertEquals('"Hello world"', $state->contentsmodified);
         $this->assertEquals('<span class="stacksyntaxexample">"Hello world"</span>', $state->contentsdisplayed);
     }
@@ -563,6 +591,7 @@ class stack_algebra_input_test extends qtype_stack_testcase {
         $el->set_parameter('sameType', true);
         $state = $el->validate_student_response(array('sans1' => 'x^2'), $options, '"A random string"', null);
         $this->assertEquals(stack_input::INVALID, $state->status);
+        $this->assertEquals('CASError: stack_trans(\'ATAlgEquiv_SA_not_string\');', $state->note);
         $this->assertEquals('x^2', $state->contentsmodified);
         $this->assertEquals('\[ x^2 \]', $state->contentsdisplayed);
     }
