@@ -245,7 +245,7 @@ define(['jquery', 'core/yui', 'core/config', 'theme_bootstrapbase/bootstrap'], f
                     this.remove_all_castextdiv_classes();
                     this.validationdiv.setContent('');
                     this.warninganchor.addClass('empty');
-                    
+
                     if (results.contentsdisplayed !== "") {
                         $(this.input.input.getDOMNode()).css('float', 'left');
                         this.castextdiv.setContent(results.contentsdisplayed);
