@@ -59,7 +59,6 @@ class stack_algebraic_input extends stack_input {
         if ($readonly) {
             $attributes['readonly'] = 'readonly';
         }
-
         $casdisplay = html_writer::tag('div', '', array('class' => "casdisplay empty", 'id' => $fieldname.'_cas'));
 
         $popoverposition = 'right';
