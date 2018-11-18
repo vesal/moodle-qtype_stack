@@ -1212,7 +1212,7 @@ class stack_utils {
         // Note, the spaces before these connectives are essential.
         $connectives = array(' and' => ' nounand', ' or' => ' nounor', ')and' => ') nounand', ')or' => ') nounor');
         // The last two patterns are fine in the reverse direction as these patterns will have gone.
-        $regexnouns = array('int' => 'nounint', 'diff' => 'noundiff');
+        $regexnouns = array('int' => 'nounint', 'integrate' => 'nounint', 'diff' => 'noundiff');
 
         if ($direction === 'add') {
             foreach ($connectives as $key => $val) {
@@ -1246,6 +1246,10 @@ class stack_utils {
             if (substr(trim($str), 0, 9) == 'stacklet(' && substr(trim($str), -1, 1) == ')') {
                 $str = stack_string('equiv_LET') . ' ' . implode('=', explode(',', substr(trim($str), 9, -1)));
             }
+            // Apostophies are not permitted in student's expressions.
+            $str = str_replace("'sum", "sum", $str);
+            $str = str_replace("'int", "int", $str);
+            $str = str_replace("'diff", "diff", $str);
         }
 
         return $str;

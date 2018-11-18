@@ -55,7 +55,8 @@ stack_reset(not_used) := block(
   MAXIMA_VERSION_STR: ?\*autoconf\-version\*,
   MAXIMA_VERSION: map(parse_string, tokens(?\*autoconf\-version\*, 'digitcharp)),
   /* We need the "if" statement below, because versions compiled from source give erroneous results. */
-  MAXIMA_VERSION_NUM: float(MAXIMA_VERSION[2]+(if is(MAXIMA_VERSION[3]<10) then MAXIMA_VERSION[3]/10 else 0)),
+  MAXIMA_VERSION_NUM: float(MAXIMA_VERSION[2]+(if is(length(MAXIMA_VERSION)>2)
+    then (if is(MAXIMA_VERSION[3]<10) then MAXIMA_VERSION[3]/10 else 0) else 0)), 
 
   OPT_OUTPUT: "LaTeX",
   PLOT_TAGS: true,
@@ -80,7 +81,8 @@ degree(ex,v) := ev(hipow(expand(ex), v), simp); /* See notes on hipow.          
 /* Load contributed packages          */
 /* ********************************** */
 
-load ("functs");
+load("functs");
+/* Not yet testsed: load("vect"); */
 
 /* We don't want to allow people to put boxes round things. */
 box(ex) := ex;
@@ -127,31 +129,69 @@ alias(arccos, acos);          /* At the request of the OU, 4 Feb 2013. */
 alias(arcsin, asin);
 alias(arctan, atan);
 
-load("mathml.lisp");
-
 make_complexJ(OPT_COMPLEXJ) := block(
   if OPT_COMPLEXJ = "i" then
-    (i:%i,load("complexi.lisp"))
+    (i:%i,texput(%i,"\\mathrm{i}"))
   else if OPT_COMPLEXJ = "j" then
-    (%j:%i,j:%i,load("complexj.lisp"))
+    (%j:%i,j:%i,texput(%i,"\\mathrm{j}"))
   else if OPT_COMPLEXJ = "symi" then
-    (load("complexi.lisp"))
+    (texput(%i,"\\mathrm{i}"))
   else if OPT_COMPLEXJ = "symj" then
-    (load("complexj.lisp"))
+    (texput(%i,"\\mathrm{j}"))
   else true
-);
+)$
 
 /* Choose the symbol for the multiplication sign. */
 make_multsgn(OPT_MULTSGN) := block(
-    if OPT_MULTSGN = "cross" then load("multiply_cross.lisp"),
-    if OPT_MULTSGN = "dot" then load("multiply_dot.lisp"),
-    if OPT_MULTSGN = "blank" then load("multiply_blank.lisp")
+    if OPT_MULTSGN = "cross" then texput("*", "\\times ", nary),
+    if OPT_MULTSGN = "dot" then texput("*", "\\cdot ", nary),
+    if OPT_MULTSGN = "blank" then texput("*", "\\, ", nary)
 );
 
 /* Options for cos^(-1), acos or arccos. */
 make_arccos(OPT_ACOS) := block(
-    if OPT_ACOS = "cos-1" then load("cos-1.lisp"),
-    if OPT_ACOS = "arccos" then load("arccos.lisp")
+    if OPT_ACOS = "cos-1" then block(
+       texput(asin, "\\sin^{-1}", prefix),
+       texput(acos, "\\cos^{-1}", prefix),
+       texput(atan, "\\tan^{-1}", prefix),
+       texput(asec, "{\\rm sec}^{-1}", prefix),
+       texput(acsc, "{\\rm csc}^{-1}", prefix),
+       texput(acot, "{\\rm cot}^{-1}", prefix),
+       texput(asinh, "{\\rm sinh}^{-1}", prefix),
+       texput(acosh, "{\\rm cosh}^{-1}", prefix),
+       texput(atanh, "{\\rm tanh}^{-1}", prefix),
+       texput(asech, "{\\rm sech}^{-1}", prefix),
+       texput(acsch, "{\\rm csch}^{-1}", prefix),
+       texput(acoth, "{\\rm coth}^{-1}", prefix)
+    ),
+    if OPT_ACOS = "arccos" then block(
+       texput(asin, "\\arcsin ", prefix),
+       texput(acos, "\\arccos ", prefix),
+       texput(atan, "\\arctan ", prefix),
+       texput(asec, "{\\rm arcsec}", prefix),
+       texput(acsc, "{\\rm arccsc}", prefix),
+       texput(acot, "{\\rm arccot}", prefix),
+       texput(asinh, "{\\rm arcsinh}", prefix),
+       texput(acosh, "{\\rm arccosh}", prefix),
+       texput(atanh, "{\\rm arctanh}", prefix),
+       texput(asech, "{\\rm arcsech}", prefix),
+       texput(acsch, "{\\rm arccsch}", prefix),
+       texput(acoth, "{\\rm arccoth}", prefix)
+    ),
+    if OPT_ACOS = "acos" then block(
+       texput(asin, "{\\rm asin}", prefix),
+       texput(acos, "{\\rm acos}", prefix),
+       texput(atan, "{\\rm atan}", prefix),
+       texput(asec, "{\\rm asec}", prefix),
+       texput(acsc, "{\\rm acsc}", prefix),
+       texput(acot, "{\\rm acot}", prefix),
+       texput(asinh, "{\\rm asinh}", prefix),
+       texput(acosh, "{\\rm acosh}", prefix),
+       texput(atanh, "{\\rm atanh}", prefix),
+       texput(asech, "{\\rm asech}", prefix),
+       texput(acsch, "{\\rm acsch}", prefix),
+       texput(acoth, "{\\rm acoth}", prefix)
+    )
 );
 
 
@@ -201,6 +241,14 @@ rand(ex) := block(
   if (floatnump(ex)) then return(random(ex)),
   if (matrixp(ex)) then return(matrixmap(random, ex)),
   if (listp(ex)) then return(randlist(ex))
+)$
+
+/* Allow zero as an argument to random. */
+rand_zero(ex):= block(
+  if not(integerp(ex)) then error("rand_zero expects its argument to be an integer."),
+  if is(ex<0) then error("rand_zero expects its argument to be non-negative."),
+  if is(ex=0) then return(0),
+  return(rand(ex))
 )$
 
 randlist(ex) := block(
@@ -259,13 +307,13 @@ list_remove(ex, n) := block([k, l],
 
 /* Create a number in a random range. */
 rand_range([ex]) := block(
-  if (length(ex)<2 or length(ex)>3) then error("rand_range must have 2 or three arguments."),
+  if (length(ex)<2 or length(ex)>3) then error("rand_range must have 2 or 3 arguments."),
   if not(integerp(ex[1])) then error("rand_range expects its first argument to be an integer."),
   if not(integerp(ex[2])) then error("rand_range expects its second argument to be an integer."),
-  if is(length(ex)=2) then return(ev(ex[1]+rand(ex[2]-ex[1]), simp)),
-  if not(integerp(ex[3])) then error("rand_range expects its first argument to be an integer."),
-  if is(length(ex)=3) then return(ev(ex[1]+ex[3]*rand(floor((ex[2]-ex[1])/ex[3])), simp))
-);
+  if is(length(ex)=2) then return(ev(ex[1]+rand_zero(ex[2]-ex[1]), simp)),
+  if not(integerp(ex[3])) then error("rand_range expects its third argument to be an integer."),
+  return(ev(ex[1]+ex[3]*rand_zero(floor((ex[2]-ex[1])/ex[3])), simp))
+)$
 
 /* Helper function for constructing MCQ arrays. */
 multiselqn(corbase, numcor, wrongbase, numwrong):=block([ta1, ta2, ta, version],
@@ -371,9 +419,6 @@ stack_disp(expr, exprm) := block([str:"", expru],
         expstr: tex(expru, false),
         expstr: concat(ld, stack_disp_strip_dollars(expstr), rd)
     ),
-    /* MathML display */
-    if OPT_OUTPUT = "MathML" then
-        str: mathml(expr, false),
     /* String display */
     if OPT_OUTPUT = "String" then str: string(expr),
     /* If no correct options have been set. */
@@ -455,22 +500,6 @@ detexcolor(ex) := block([argsex],
   if op(ex) = texcolorplain then return(detexcolor(argsex[2])),
   if op(ex) = "/" then return(detexcolor(argsex[1])/detexcolor(argsex[2])),
   map(detexcolor, ex)
-)$
-
-detexdecorate(ex) := block([argsex],
-  if mapatom(ex) then return(ex),
-  argsex:args(ex),
-  if op(ex) = texdecorate then return(detexdecorate(argsex[2])),
-  if op(ex) = "/" then return(detexdecorate(argsex[1])/detexdecorate(argsex[2])),
-  map(detexdecorate, ex)
-)$
-
-/* Assume all non-numeric atoms are to be displayed in bold. */
-texboldatoms(ex) := block(
-  if numberp(ex) then return(ex),
-  if atom(ex) then return(texdecorate("\\bf", ex)),
-  if arrayp(ex) then return(arraymake(op(ex), maplist(texboldatoms, args(ex)))),
-  apply(op(ex), maplist(texboldatoms, args(ex)))
 )$
 
 /* We only display matrices with the following matching pairs of delimiters.
@@ -605,11 +634,11 @@ cte(var, ex) := block([str],
 /* This function strips out functions to leave only things in the value which might be typed in. */
 stack_dispvalue(ex) := block(
   ex: detexcolor(ex),
-  ex: detexdecorate(ex),
   ex: make_displaydpvalue(ex),
   ex: make_displayscivalue(ex),
   if not(stack_disp_control_structurep(ex)) then
       ex: unary_minus_sort(opsubst("*", stackunits, ex)),
+      ex: destackvector(ex),
   return(string(ex))
 )$
 
@@ -700,7 +729,6 @@ stack_validate(expr, ForbidFloats, LowestTerms, TAns) := block([simp:false, exs,
   /* Now display the result. */
   simp: false,
   expr: detexcolor(expr),
-  expr: detexdecorate(expr),
   return(expr)
 )$
 
@@ -869,8 +897,7 @@ plot(ex, [ra]) :=  /*stack_web_plot*/
     ufn: concat("<img src='", URL_BASE, filename, ".", PLOT_TERMINAL, "' alt='", alttext, "' width='", string(plot_size[1]), "' />"),
     if plot_tags then
         ufn: concat("<div class='stack_plot'>", ufn, "</div>"),
-    if OPT_OUTPUT#"MathML" then
-      ufn: concat(" <html>", ufn, "</html> "),
+    ufn: concat(" <html>", ufn, "</html> "),
     /* Sort out plot_options and preamble*/
     preamble: "",
     if not(member(xlabel, maplist(first, ral))) then ral: append(ral, [[xlabel, ""]]),
@@ -2311,13 +2338,13 @@ ATSingleFrac(SA, SB) := block(
 divthru(q) :=
        if (not atom(q) and part(q,0)="/")
        then
-         block([num, den, div, quo, rem],
+         block([num,den,divt,quo,rem],
            num:part(q, 1),
            den:part(q, 2),
-           div:divide(num, den) ,
-           quo:div[1],
-           rem:div[2],
-           quo+rem/ den )
+           divt:divide(num, den) ,
+           quo:divt[1],
+           rem:divt[2],
+           quo+rem/den )
        else q;
 
 /*****************************************************************/
@@ -2429,7 +2456,7 @@ ATCompSquare(SA, SB, SO) := block([Validity,RawMark,FeedBack,AnswerNote,ret,wrt,
     if atom(wrt)#true then (SA:subst(facdum, wrt, SA), SB:subst(facdum, wrt, SB), wrt:facdum),
 
     if member(wrt,listofvars(SB)) and not(member(wrt,listofvars(SA))) then
-        return([true, false, StackAddNote("", "ATCompSquare_SA_not_depend_var"), StackAddFeedback("", "ATCompSquare_SA_not_depend_var", stack_disp(SBL[2], "i"))]),
+        return([true, false, StackAddNote("", "ATCompSquare_SA_not_depend_var"), StackAddFeedback("", "ATCompSquare_SA_not_depend_var", stack_disp(wrt, "i"))]),
 
     opa:safe_op(SA),
 
@@ -2439,6 +2466,14 @@ ATCompSquare(SA, SB, SO) := block([Validity,RawMark,FeedBack,AnswerNote,ret,wrt,
         return([true, true, StackAddNote("", "ATCompSquare_true_trivial"), ""]),
     if ae and is(degree(expand(SB),wrt)=1) then
         return([true, true, StackAddNote("", "ATCompSquare_true_trivial"), ""]),
+
+    /* case: -(x-1)^2/k */
+    if opa="-" then block(
+        SA:first(args(SA)),
+        /* For the algebraic equivalence test later */
+        SB:-1*SB,
+        opa:safe_op(SA)
+    ),
 
     /* case: (x-1)^2 */
     if opa="^" and part(args(SA),2)=2 then cform:true,
@@ -2463,12 +2498,15 @@ ATCompSquare(SA, SB, SO) := block([Validity,RawMark,FeedBack,AnswerNote,ret,wrt,
 
         if atom(argsa[1]) then return(true),
 
+        /* case: -(x-1)^2 + c*/
+        if op(argsa[1])="-" then argsa[1]:first(args(argsa[1])),
+
         /* case: (x-1)^2 + c*/
         if op(argsa[1])="^" and part(argsa[1],2)=2 then cform:true,
 
         /* case: k*(x-1)^2 + c*/
         if op(argsa[1])="*" then block([argsb],
-           argsb: sublist(args(argsa[1]),lambda([ex],elementp(wrt,setify(listofvars(ex))))),
+           argsb: sublist(args(argsa[1]), lambda([ex], elementp(wrt, setify(listofvars(ex))))),
            if length(argsb)=1 then
                if op(argsb[1])="^" and part(argsb[1],2)=2 then cform:true
         )
@@ -2487,7 +2525,6 @@ ATCompSquare(SA, SB, SO) := block([Validity,RawMark,FeedBack,AnswerNote,ret,wrt,
     AnswerNote:concat("ATCompSquare_false",AnswerNote),
     return([true,false,StackAddNote("",AnswerNote),StackAddFeedback("",AnswerNote)])
     )$
-
 
 /*********************/
 /* Calculus question */
@@ -2607,7 +2644,6 @@ ATIntOptionsHelper(in, out) := block(
 
 Intfun(SA, SB, SBdisp, constint, var) := block([val,rawmk,ansnote,fb,ret,ex,SAd,SBd,SBraw,saa,dd,dc,lSAv,lSBv,mSAv,mSBv,SAConsistentLogs,SAUsedLogAbs,SBUsedLogAbs],
     val:true, rawmk:false, fb:"", ansnote:"",
-    debug:false,
     ret:[val, rawmk, ansnote, fb],
     /* Check if the teacher and student used only log abs.
        Teacher must be consistent, otherwise the student doesn't have to be!*/
@@ -2757,6 +2793,13 @@ ATInt_consistent_logabs_p(ex, var):=block([helper],
   helper:ev(ATInt_consistent_logabs_p_helper(ex, var), simp),
   helper:listofvars(helper),
   if member(STACKLOG, helper) and member(STACKLOGABS, helper) then false else true
+);
+
+/* Look over an expression and find all the variables wrt which we are integrating. */
+ATIntGetVar(ex):= block(
+    if atom(ex) then return([]),
+    if safe_op(ex)="int" then return([second(args(ex))]),
+    flatten(map(ATIntGetVar, args(ex)))
 );
 
 /********************************************************************/
