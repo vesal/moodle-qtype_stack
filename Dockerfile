@@ -7,7 +7,7 @@ RUN mkdir -p /var/data/api/stack/logs && mkdir mkdir -p /var/data/api/stack/tmp
 # We probably need to look at
 # https://github.com/uni-halle/maximapool-docker/blob/develop/Dockerfile
 # 
-RUN apt-get update && apt-get install maxima gnuplot libyaml-dev unzip git -y
+RUN apt-get update && apt-get install maxima gnuplot libyaml-dev unzip git nano -y
 RUN pecl install yaml
 RUN echo "extension=yaml.so" > /usr/local/etc/php/conf.d/yaml.ini
 #RUN pecl install xdebug-2.5.0 && docker-php-ext-enable xdebug
